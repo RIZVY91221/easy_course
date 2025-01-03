@@ -109,8 +109,6 @@ flutter:
   assets:
     - .env
     - .env.example
-    - .env.prod
-    - .env.stag
     - assets/icons/
     - assets/icons/svg/
     - assets/images/
