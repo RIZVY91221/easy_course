@@ -13,6 +13,7 @@ import 'package:bs_assignment/core/widget/global/loading/wid_loading_skeleton.da
 import 'package:bs_assignment/core/widget/global/modal/app_modal.dart';
 import 'package:bs_assignment/core/widget/global/pagination/pagging_view.dart';
 import 'package:bs_assignment/core/widget/global/sidebar/wid_appbar.dart';
+import 'package:bs_assignment/core/widget/user/comment_modal.dart';
 import 'package:bs_assignment/core/widget/user/fab_bottom_app_bar.dart';
 import 'package:bs_assignment/generated/assets.dart';
 import 'package:bs_assignment/models/community_posts/feed_response.dart';
@@ -61,10 +62,13 @@ class HomeScreen extends BaseView<HomeController> {
     if (controller.selectedTab.value == 0) {
       return communityPage();
     } else {
-      return  Opacity(opacity: 0.5,child: communityPage(),);
+      return Opacity(
+        opacity: 0.5,
+        child: communityPage(),
+      );
     }
   }
-  
+
   @override
   Widget? bottomNavigationBar() {
     return FABBottomAppBar(
@@ -76,73 +80,86 @@ class HomeScreen extends BaseView<HomeController> {
       notchedShape: const CircularNotchedRectangle(),
       onTabSelected: (v) => controller.selectedTab.value = v,
       items: [
-        FABBottomAppBarItem(
-          svgIcon:Assets.svgComunityIcon,
-          text: "Community"
-        ),
-        FABBottomAppBarItem(
-            svgIcon:Assets.svgLogoutIcons,
-            text: "Logout"
-        ),
+        FABBottomAppBarItem(svgIcon: Assets.svgComunityIcon, text: "Community"),
+        FABBottomAppBarItem(svgIcon: Assets.svgLogoutIcons, text: "Logout"),
       ],
     );
   }
 
-  Widget communityPage()=>Column(
-    children: [
-      const SizedBox(height: 12),
-      createPost(onPress: () async {
-        await Get.toNamed(AppRoutes.CREATE_POST);
-        await controller.onRefresh();
-      }),
-      Expanded(
-          child: Padding(
+  Widget communityPage() => Column(
+        children: [
+          const SizedBox(height: 12),
+          createPost(onPress: () async {
+            await Get.toNamed(AppRoutes.CREATE_POST);
+            await controller.onRefresh();
+          }),
+          Expanded(
+              child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
             child: PagingView<FeedItemResponse>(
                 pagingController: controller.paginationController.pagingController,
-                itemBuilder: (context, item, i) => NewsFeedItemCard(item:item)),
+                itemBuilder: (context, item, i) => NewsFeedItemCard(
+                      item: item,
+                      onPressComment: () async {
+                        if (item.commentCount != null && item.commentCount! > 0) {
+                          await controller.getCommentList(item.id ?? -999);
+                          await Get.bottomSheet(CommentModal(
+                            comments: controller.selectedCommentList.value,
+                            commentController: controller.commentController,
+                            onPressComment: () async{
+                              await controller.createComment(feedId: item.id??-99, feedUserId: item.user?.id??-99);
+                            },
+                          ));
+                        }
+                      },
+                    )),
           ))
-    ],
-  );
-  
-  Widget createPost({VoidCallback? onPress})=>Container(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    margin: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(8),
-      boxShadow: const [
-        BoxShadow(
-          color: Colors.black12,
-          blurRadius: 6,
-          offset: Offset(0, 2),
-        ),
-      ],
-    ),
-    child: Row(
-      children: [
-        CircleAvatar(
-          radius: 20,
-          backgroundColor: Colors.grey[300],
-          child: const Icon(
-            Icons.person,
-            color: Colors.grey,
-            size: 24,
-          ),
-        ),
-        const SizedBox(width: 12),
-         Expanded(
-          child: TextField(
-            onTap: onPress,
-            decoration: const InputDecoration(
-              hintText: 'Write Something here...',
-              border: InputBorder.none,
+        ],
+      );
+
+  Widget createPost({VoidCallback? onPress}) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 6,
+              offset: Offset(0, 2),
             ),
-            readOnly: true,
-          ),
+          ],
         ),
-        DefaultPrimaryButton(text: "Post",height: 40,onPressed: onPress,buttonRound: ButtonRound.minRounded,)
-      ],
-    ),
-  );
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.grey[300],
+              child: const Icon(
+                Icons.person,
+                color: Colors.grey,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: TextField(
+                onTap: onPress,
+                decoration: const InputDecoration(
+                  hintText: 'Write Something here...',
+                  border: InputBorder.none,
+                ),
+                readOnly: true,
+              ),
+            ),
+            DefaultPrimaryButton(
+              text: "Post",
+              height: 40,
+              onPressed: onPress,
+              buttonRound: ButtonRound.minRounded,
+            )
+          ],
+        ),
+      );
 }

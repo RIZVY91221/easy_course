@@ -19,8 +19,9 @@ import '../dailog/wid_popup_menu_button.dart';
 
 
 class NewsFeedItemCard extends StatelessWidget {
-  const NewsFeedItemCard({Key? key, required this.item}) : super(key: key);
+  const NewsFeedItemCard({Key? key, required this.item, this.onPressComment}) : super(key: key);
   final FeedItemResponse item;
+  final VoidCallback? onPressComment;
 
   @override
   Widget build(BuildContext context) {
@@ -124,9 +125,9 @@ class NewsFeedItemCard extends StatelessWidget {
                 // popView: true,
               ),
             ):const SizedBox.shrink(),
-            ReactionWidget(likes: item.likeType!.length,comments: 3,likeType: item.likeType??[],),
+            ReactionWidget(likes: item.likeType!.length,comments: item.commentCount??0,likeType: item.likeType??[],),
             AppGap.vertical15,
-            WidgetSubmitReaction()
+            WidgetSubmitReaction(onTabComment: onPressComment,)
           ],
         ));
   }

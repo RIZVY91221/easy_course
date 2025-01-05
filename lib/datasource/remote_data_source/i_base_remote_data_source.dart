@@ -3,7 +3,9 @@ import 'package:bs_assignment/core/network/rest_client.dart';
 import 'package:bs_assignment/core/utils/endpoints/endpoints.dart';
 import 'package:bs_assignment/datasource/remote_data_source/base_remote_data_source.dart';
 import 'package:bs_assignment/models/auth/login_response.dart';
+import 'package:bs_assignment/models/community_posts/comment_model.dart';
 import 'package:bs_assignment/models/community_posts/feed_response.dart';
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
 @lazySingleton
@@ -60,6 +62,28 @@ class ImplementBaseRemoteDataSource extends BaseRemoteDataSource {
   Future<void> postLogout() async{
     try {
       final res = await _dioClient.post(Endpoints.POST_LOGOUT);
+
+      return await res;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<CommunityComment>> getComment(int id) async{
+    try {
+      final res = await _dioClient.get("${Endpoints.GET_COMMENT}/$id");
+
+      return List<CommunityComment>.from(res.map((e) => CommunityComment.fromJson(e)).toList());
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> createComment(Map<String, dynamic> task) async{
+    try {
+      final res = await _dioClient.post(Endpoints.CREATE_COMMENT, data: task);
 
       return await res;
     } catch (e) {
