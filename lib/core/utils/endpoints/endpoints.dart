@@ -18,9 +18,8 @@ class Endpoints {
 
   //TODO: Add other settings and url endpoint here
 
-  static const String POST_LOGIN = "wp-json/jwt-auth/v1/token";
-  static const String POST_SIGNUP = "wp-json/wp/v2/users/register";
-
-  static const String USER_DETAILS = "wp-json/wp/v2/users/me";
-  static const String UPDATE_USER = "wp-json/wp/v2/users/";
+  static const String POST_LOGIN = "/s/auth/login";
+  static const String POST_LOGOUT = "/student/auth/logout";
+  static const String NEWS_FEED = "/teacher/community/getFeed";
+  static const String CREATE_POST = "/teacher/community/createFeedWithUpload";
 }

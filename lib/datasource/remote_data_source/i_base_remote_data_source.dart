@@ -1,13 +1,9 @@
-import 'dart:convert';
-
 import 'package:bs_assignment/core/network/dio_client.dart';
 import 'package:bs_assignment/core/network/rest_client.dart';
 import 'package:bs_assignment/core/utils/endpoints/endpoints.dart';
 import 'package:bs_assignment/datasource/remote_data_source/base_remote_data_source.dart';
-import 'package:bs_assignment/generated/assets.dart';
 import 'package:bs_assignment/models/auth/login_response.dart';
-import 'package:bs_assignment/models/product/product_resource.dart';
-import 'package:flutter/services.dart';
+import 'package:bs_assignment/models/community_posts/feed_response.dart';
 import 'package:injectable/injectable.dart';
 
 @lazySingleton
@@ -24,8 +20,9 @@ class ImplementBaseRemoteDataSource extends BaseRemoteDataSource {
   @override
   Future<LoginResponse> postLogin(String email, String password) async {
     Map<String, dynamic> body = {};
-    body["username"] = email;
+    body["email"] = email;
     body["password"] = password;
+    body["app_token"] = " ";
     try {
       final res = await _dioClient.post(Endpoints.POST_LOGIN, queryParameters: body);
       return LoginResponse.fromJson(res);
@@ -34,64 +31,37 @@ class ImplementBaseRemoteDataSource extends BaseRemoteDataSource {
     }
   }
 
+  ///teacher/community/getFeed?status=feed&page=1
+///
   @override
-  Future<Map<String, dynamic>> postSignup(Map<String, dynamic> data) async {
+  Future<List<FeedItemResponse>> getCommunityFeedResponse(String page) async {
     try {
-      final res = await _dioClient.post(Endpoints.POST_SIGNUP, data: data);
-      return res;
+      final res = await _dioClient.post(Endpoints.NEWS_FEED,queryParameters: {"status":"feed"},
+        data: {"community_id":"2914","space_id":"5883","more":page}
+      );
+      return List<FeedItemResponse>.from(res.map((e) => FeedItemResponse.fromJson(e)).toList());
     } catch (e) {
       rethrow;
     }
   }
 
   @override
-  Future<List<ProductResource>> getProductList(String filterBy) async {
+  Future<Map<String, dynamic>> createPost(Map<String, dynamic> task) async{
     try {
-      // Load JSON string from assets
-      List<dynamic> res = [];
-      await rootBundle.loadString(Assets.assetsProductResponse).then((value) async => res = await json.decode(value) as List<dynamic>);
-      // Sort and filter the list based on the filterBy parameter
-      List<ProductResource> resource = res.map((x) => ProductResource.fromJson(x)).toList();
+      final res = await _dioClient.post(Endpoints.CREATE_POST, data: task);
 
-      if (filterBy.isNotEmpty) {
-        switch (filterBy) {
-          case "Newest":
-            resource.sort((a, b) => DateTime.parse(b.product?.dateCreated ?? '').compareTo(DateTime.parse(a.product?.dateCreated ?? '')));
-            break;
-          case "Oldest":
-            resource.sort((a, b) => DateTime.parse(a.product?.dateCreated ?? '').compareTo(DateTime.parse(b.product?.dateCreated ?? '')));
-            break;
-          case "Price low > high":
-            resource.sort((a, b) => int.parse(a.product?.price ?? '0').compareTo(int.parse(b.product?.price ?? '0')));
-            break;
-          case "Price high > low":
-            resource.sort((a, b) => int.parse(b.product?.price ?? '0').compareTo(int.parse(a.product?.price ?? '0')));
-            break;
-          default:
-            break;
-        }
-      }
-      return resource;
+      return await res;
     } catch (e) {
       rethrow;
     }
   }
 
   @override
-  Future<Map<String, dynamic>> getUserDetails() async {
+  Future<void> postLogout() async{
     try {
-      final res = await _dioClient.get(Endpoints.USER_DETAILS);
-      return res;
-    } catch (e) {
-      rethrow;
-    }
-  }
+      final res = await _dioClient.post(Endpoints.POST_LOGOUT);
 
-  @override
-  Future<Map<String, dynamic>> updateUser(String id, Map<String, dynamic> data) async {
-    try {
-      final res = await _dioClient.post("${Endpoints.UPDATE_USER}/$id", data: data);
-      return res;
+      return await res;
     } catch (e) {
       rethrow;
     }

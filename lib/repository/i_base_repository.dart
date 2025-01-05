@@ -2,7 +2,7 @@ import 'package:bs_assignment/datasource/local_data_source/base_local_source.dar
 import 'package:bs_assignment/datasource/remote_data_source/base_remote_data_source.dart';
 import 'package:bs_assignment/datasource/shared_preference_data_source/base_shared_prefrence.dart';
 import 'package:bs_assignment/models/auth/login_response.dart';
-import 'package:bs_assignment/models/product/product_resource.dart';
+import 'package:bs_assignment/models/community_posts/feed_response.dart';
 import 'package:bs_assignment/repository/base_repository.dart';
 import 'package:injectable/injectable.dart';
 
@@ -37,16 +37,6 @@ class ImplementBaseRepository implements BaseRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> postSignup(Map<String, dynamic> data) async {
-    return await _remoteDataSource.postSignup(data);
-  }
-
-  @override
-  Future<List<ProductResource>> getProductList(String filterBy) async {
-    return await _remoteDataSource.getProductList(filterBy);
-  }
-
-  @override
   Future<void> logout() {
     return _localDataSource.logout();
   }
@@ -68,12 +58,18 @@ class ImplementBaseRepository implements BaseRepository {
   LoginResponse get userDefault => _localDataSource.userDefault;
 
   @override
-  Future<Map<String, dynamic>> getUserDetails() async {
-    return await _remoteDataSource.getUserDetails();
+  Future<List<FeedItemResponse>> getCommunityFeedResponse(String page) async{
+   return await _remoteDataSource.getCommunityFeedResponse(page);
   }
 
   @override
-  Future<Map<String, dynamic>> updateUser(String id, Map<String, dynamic> data) async {
-    return await _remoteDataSource.updateUser(id, data);
+  Future<Map<String, dynamic>> createPost(Map<String, dynamic> task) async{
+    return await _remoteDataSource.createPost(task);
   }
+
+  @override
+  Future<void> postLogout() async{
+   return await _remoteDataSource.postLogout();
+  }
+
 }

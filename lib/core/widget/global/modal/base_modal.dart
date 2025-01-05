@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 class BaseModal {
   static Future<void> show({
     required BuildContext context,
-    double height = 285,
+    double height = 200,
     double borderRadius = 24,
     double elevation = 10,
     Widget? child,

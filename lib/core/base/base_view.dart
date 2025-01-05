@@ -131,7 +131,7 @@ abstract class BaseView<Controller extends BaseController> extends GetView<Contr
   }
 
   Widget? drawer(BuildContext context) {
-    return null; //appDrawer(context);
+    return null;//appDrawer(context);
   }
 
   Widget _showLoading() {

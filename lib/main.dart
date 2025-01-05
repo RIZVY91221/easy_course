@@ -1,3 +1,4 @@
+import 'package:bs_assignment/core/theme/colors.dart';
 import 'package:bs_assignment/core/values/sizeconfig.dart';
 import 'package:bs_assignment/di/injectable.dart';
 import 'package:bs_assignment/environment/build_config.dart';
@@ -14,6 +15,11 @@ Future<void> main() async {
   Env.loadBuildConfig();
   WidgetsFlutterBinding.ensureInitialized();
 
+  SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+    statusBarColor: AppColor.primaryOne4B9EFF,  // Change this to your desired color
+    statusBarIconBrightness: Brightness.light,  // For white icons
+    statusBarBrightness: Brightness.dark,  // For dark icons (iOS)
+  ));
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
