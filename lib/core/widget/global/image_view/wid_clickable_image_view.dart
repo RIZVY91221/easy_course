@@ -21,6 +21,7 @@ class WidgetClickableImageView extends StatelessWidget {
     this.border,
     this.initialIndex = 0,
     this.images = const [],
+    this.isText=false,
     this.onGallerySwipe,
   }) : super(key: key);
 
@@ -34,6 +35,7 @@ class WidgetClickableImageView extends StatelessWidget {
   final int initialIndex;
   final List<Images> images;
   final Function(int)? onGallerySwipe;
+  final bool isText;
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +84,7 @@ class WidgetClickableImageView extends StatelessWidget {
                 width: double.infinity,
                 height: (MediaQuery.of(context).size.height - 150) / 3,
                 fit: BoxFit.contain,
+                isText: isText,
                 onErrorDefaultPlaceholder: true,
               ),
               if (onPressedDelete != null)

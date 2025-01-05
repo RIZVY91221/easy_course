@@ -9,15 +9,18 @@ import 'package:bs_assignment/core/values/values.dart';
 import 'package:bs_assignment/core/widget/global/button/app_button.dart';
 import 'package:bs_assignment/core/widget/global/card/card2.dart';
 import 'package:bs_assignment/core/widget/global/input_field/app_input.dart';
+import 'package:bs_assignment/core/widget/global/loading/wid_loading_skeleton.dart';
+import 'package:bs_assignment/core/widget/global/modal/app_modal.dart';
 import 'package:bs_assignment/core/widget/global/pagination/pagging_view.dart';
 import 'package:bs_assignment/core/widget/global/sidebar/wid_appbar.dart';
 import 'package:bs_assignment/core/widget/user/fab_bottom_app_bar.dart';
-import 'package:bs_assignment/features/home/controller/home_controller.dart';
-import 'package:bs_assignment/features/home/presentation/acount_screen.dart';
 import 'package:bs_assignment/generated/assets.dart';
-import 'package:bs_assignment/models/product/product_resource.dart';
+import 'package:bs_assignment/models/community_posts/feed_response.dart';
+import 'package:bs_assignment/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../controller/home_controller.dart';
 
 class HomeScreen extends BaseView<HomeController> {
   HomeScreen({super.key});
@@ -25,16 +28,28 @@ class HomeScreen extends BaseView<HomeController> {
   @override
   PreferredSizeWidget? appBar(BuildContext context) {
     return baseAppBar(
-        titleWidget: Obx(() => appBarTitle()), //Obx(() => ),
-        title: "Product List",
-        backgroundColor: AppColor.scaffoldColor,
-        titleColor: AppColor.dark202125,
-        showBorderBottom: false);
+      titleWidget: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppText.headline5("Python Developer Community", color: AppColor.whiteFFFFFF),
+          AppText.bodyExtraSmall("#General", color: AppColor.whiteFFFFFF),
+        ],
+      ),
+      leadingArrow: false,
+      hideLeading: false,
+      backgroundColor: AppColor.primaryOne4B9EFF,
+      toolbarHeight: 100,
+    );
   }
 
   @override
   Color pageBackgroundColor() {
     return AppColor.scaffoldColor;
+  }
+
+  @override
+  Color statusBarColor() {
+    return AppColor.primaryOne4B9EFF;
   }
 
   @override
@@ -44,184 +59,90 @@ class HomeScreen extends BaseView<HomeController> {
 
   Widget pageView() {
     if (controller.selectedTab.value == 0) {
-      return Column(
-        children: [
-          AppGap.vertical15,
-          widFilterBar(
-              onPressShortBy: () => Get.bottomSheet(
-                    widBottomSheet(),
-                    elevation: 5,
-                    backgroundColor: AppColor.whiteFFFFFF,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(10.0)),
-                    ),
-                  )),
-          Expanded(
-              child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
-            child: PagingView<ProductResource>(
-                isGridView: true,
-                pagingController: controller.paginationController.pagingController,
-                itemBuilder: (context, item, i) => ProductCard(productResource: item)),
-          ))
-        ],
-      );
-    } else if (controller.selectedTab.value == 3) {
-      return AccountScreen();
+      return communityPage();
     } else {
-      return Center(
-        child: AppText.headline5("InProgress"),
-      );
+      return  Opacity(opacity: 0.5,child: communityPage(),);
     }
   }
-
-  Widget appBarTitle() {
-    if (controller.selectedTab.value == 0) {
-      return AppText.headline5("ProductList", color: AppColor.dark202125);
-    } else if (controller.selectedTab.value == 3) {
-      return AppText.headline5("My Account", color: AppColor.dark202125);
-    } else {
-      return AppText.headline5("Dashboard", color: AppColor.dark202125);
-    }
-  }
-
+  
   @override
   Widget? bottomNavigationBar() {
     return FABBottomAppBar(
-      color: AppColor.darkLightest6C7576,
+      color: AppColor.dark202125,
       backgroundColor: AppColor.whiteLightestGrayF8F8F8,
       selectedColor: AppColor.primaryOne4B9EFF,
       height: 52,
+      iconSize: 15,
       notchedShape: const CircularNotchedRectangle(),
       onTabSelected: (v) => controller.selectedTab.value = v,
       items: [
         FABBottomAppBarItem(
-          iconData: Icons.home_outlined,
+          svgIcon:Assets.svgComunityIcon,
+          text: "Community"
         ),
         FABBottomAppBarItem(
-          iconData: Icons.dashboard_outlined,
-        ),
-        FABBottomAppBarItem(
-          iconData: Icons.shopping_cart_outlined,
-        ),
-        FABBottomAppBarItem(
-          iconData: Icons.person_3_outlined,
+            svgIcon:Assets.svgLogoutIcons,
+            text: "Logout"
         ),
       ],
     );
   }
 
-  @override
-  Widget? floatingActionButton() {
-    return Visibility(
-        visible: MediaQuery.of(Get.context!).viewInsets.bottom == 0.0,
-        child: FloatingActionButton(
-          backgroundColor: AppColor.primaryOne4B9EFF,
-          shape: const CircleBorder(),
-          onPressed: () {},
-          tooltip: 'Increment',
-          elevation: 2.0,
-          child: Icon(
-            Icons.search_outlined,
-            color: AppColor.whiteFFFFFF,
-          ),
-        )); // This trailing comma makes auto-formatting nicer for build methods.
-  }
-
-  @override
-  FloatingActionButtonLocation floatingActionButtonLocation() {
-    return FloatingActionButtonLocation.centerDocked;
-  }
-
-  Widget widFilterBar({VoidCallback? onPressShortBy}) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-        child: Card(
-          color: AppColor.whiteFFFFFF,
-          surfaceTintColor: AppColor.whiteFFFFFF,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 15),
-            height: 60,
-            decoration: BoxDecoration(
-              color: AppColor.whiteFFFFFF,
-              shape: BoxShape.rectangle,
-            ),
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [appSVG(Assets.svgFilter), AppGap.horizontal8, AppText.bodyVerySmall("Filter")],
-                  ),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: onPressShortBy,
-                        child: Row(
-                          children: [AppText.bodyVerySmall("Short by"), AppGap.horizontal5, const Icon(Icons.keyboard_arrow_down_outlined)],
-                        ),
-                      ),
-                      AppGap.horizontal10,
-                      const Icon(
-                        Icons.list_outlined,
-                        size: 20,
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            ),
+  Widget communityPage()=>Column(
+    children: [
+      const SizedBox(height: 12),
+      createPost(onPress: () async {
+        await Get.toNamed(AppRoutes.CREATE_POST);
+        await controller.onRefresh();
+      }),
+      Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
+            child: PagingView<FeedItemResponse>(
+                pagingController: controller.paginationController.pagingController,
+                itemBuilder: (context, item, i) => NewsFeedItemCard(item:item)),
+          ))
+    ],
+  );
+  
+  Widget createPost({VoidCallback? onPress})=>Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    margin: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(8),
+      boxShadow: const [
+        BoxShadow(
+          color: Colors.black12,
+          blurRadius: 6,
+          offset: Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Row(
+      children: [
+        CircleAvatar(
+          radius: 20,
+          backgroundColor: Colors.grey[300],
+          child: const Icon(
+            Icons.person,
+            color: Colors.grey,
+            size: 24,
           ),
         ),
-      );
-
-  Widget widBottomSheet() => SizedBox(
-        height: 350,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppGap.vertical20,
-              AppText.headline5("Filter"),
-              AppGap.vertical30,
-              Obx(
-                () => BaseCheckboxGroupInput(
-                  typeList: const ["Newest", "Oldest", "Price low > high", "Price high > low"],
-                  initialValue: controller.selectFilter.value,
-                  disableColor: AppColor.darkLight4D4D50,
-                  onChangeValue: (value) {
-                    debugPrint(value);
-                    controller.selectFilter.value = value;
-                    debugPrint(controller.selectFilter.value);
-                  },
-                ),
-              ),
-              AppGap.vertical20,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  DefaultSecondaryButton(
-                    text: "Cancel",
-                    buttonSize: ButtonSize.auto,
-                    buttonRound: ButtonRound.microRound,
-                    onPressed: () {},
-                  ),
-                  DefaultPrimaryButton(
-                    text: "Apply",
-                    buttonSize: ButtonSize.auto,
-                    buttonRound: ButtonRound.microRound,
-                    onPressed: () => controller.onApplyFilter(),
-                  )
-                ],
-              )
-            ],
+        const SizedBox(width: 12),
+         Expanded(
+          child: TextField(
+            onTap: onPress,
+            decoration: const InputDecoration(
+              hintText: 'Write Something here...',
+              border: InputBorder.none,
+            ),
+            readOnly: true,
           ),
         ),
-      );
+        DefaultPrimaryButton(text: "Post",height: 40,onPressed: onPress,buttonRound: ButtonRound.minRounded,)
+      ],
+    ),
+  );
 }

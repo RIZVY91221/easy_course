@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AppColor {
-  static Color get primaryOne4B9EFF => const Color(0xFFF75F55); //background: #F75F55;
-  static Color get primaryTwo10CCE4 => const Color(0xFF10CCE4);
+  static Color get primaryOne4B9EFF => const Color(0xFF115C67); //background: #F75F55;
+  static Color get primaryTwo10CCE4 => const Color(0xFF023D45);
 
   static Color get primaryToneOneEAF4FF => const Color(0xFFffcbc9); //#202125
   static Color get primaryToneTwoE6F7F9 => const Color(0xFFffb3b0);
@@ -17,6 +17,7 @@ class AppColor {
   static Color get secondaryToneThreeFFECE7 => const Color(0xFFFFECE7);
   static Color get secondaryToneFourEEF1FA => const Color(0xFFEEF1FA);
   static Color get secondaryToneFiveE4F7F6 => const Color(0xFFE4F7F6);
+  static Color get secondaryToneSizE4F7F6 => const Color(0xFFF5F5FF);
 
   static Color get dark202125 => const Color(0xFF202125);
   static Color get darkLight4D4D50 => const Color(0xFF4d4d50);
@@ -26,6 +27,8 @@ class AppColor {
   static Color get whiteLightestGrayF8F8F8 => const Color(0xFFf8f8f8);
   static Color get whiteFFFFFF => const Color(0xFFFFFFFF);
   static Color get scaffoldColor => const Color(0xFFF8F8F8);
+  static Color get textFieldColor => const Color(0xFFD0D5DD);
+  static Color get loginButtonColor => const Color(0xFFE8F54A);
 
   static Color get errorFE6C44 => const Color(0xFFFE6C44);
   static Color get dangerFE6C44 => const Color(0xFFFE6C44);

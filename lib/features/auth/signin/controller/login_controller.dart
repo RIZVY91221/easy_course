@@ -82,9 +82,6 @@ class LoginController extends BaseController {
     await repository.postLogin(emailTextEditingController.text, passwordTextEditingController.text).then((response) async {
       if (response.token != null) {
         await repository.setAccessToken(response.token ?? '');
-        await repository.getUserDetails().then((value) async {
-          await repository.setCurrentUserId('${value["id"]}');
-        });
         //TODO: Add route page here :example
         Get.offAllNamed(AppRoutes.HOME_SCREEN);
       }

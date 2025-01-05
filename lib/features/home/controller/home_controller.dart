@@ -1,8 +1,8 @@
 import 'package:bs_assignment/core/base/base_controller.dart';
 import 'package:bs_assignment/core/base/paging_controller.dart';
-import 'package:bs_assignment/core/theme/text.dart';
-import 'package:bs_assignment/core/uttils/toasts.dart';
-import 'package:bs_assignment/models/product/product_resource.dart';
+import 'package:bs_assignment/core/controller/global_controller.dart';
+import 'package:bs_assignment/core/widget/global/modal/app_modal.dart';
+import 'package:bs_assignment/models/community_posts/feed_response.dart';
 import 'package:bs_assignment/repository/base_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -14,19 +14,27 @@ class HomeController extends BaseController {
 
   HomeController({required this.repository});
 
-  late CustomPaginationController<ProductResource> paginationController = CustomPaginationController<ProductResource>(
-      onFetchPage: (pageKey, filterText, searchText) async => await getOrderListService(pageKey, filterText, searchText));
-
-  TextEditingController emailController = TextEditingController();
-  TextEditingController fullNameController = TextEditingController();
 
   var selectedTab = 0.obs;
 
   var selectFilter = ''.obs;
-  var productResource = List<ProductResource>.empty(growable: true).obs;
+  var feedResource = List<FeedItemResponse>.empty(growable: true).obs;
+
+  late CustomPaginationController<FeedItemResponse> paginationController = CustomPaginationController<FeedItemResponse>(
+      onFetchPage: (pageKey, filterText, searchText) async => await getNewsFeedService());
   @override
   void onInit() {
     paginationController.initialize();
+    selectedTab.listen((v){
+      if(v==1){
+        ConfirmationModal.show(header: "Logout",content: "Are you sure want to logout",button2: "No",button1: "Yes",onPressed: ()async{
+          await callDataService(repository.logout(),onSuccess: (v)async{
+            await repository.logout();
+            await Get.find<GlobalController>().logOut();
+          });
+        });
+      }
+    });
     super.onInit();
   }
 
@@ -39,24 +47,14 @@ class HomeController extends BaseController {
   /* ***
    * call data from repo
    * **/
-  Future<List<ProductResource>> getOrderListService(int pageKey, String? filter, String? search) async {
-    productResource.value = await callDataService(repository.getProductList(selectFilter.value));
-    return productResource;
+  Future<List<FeedItemResponse>> getNewsFeedService() async {
+    feedResource.value = await callDataService(repository.getCommunityFeedResponse(feedResource.value.isNotEmpty?"${feedResource.last.id}":""));
+    return feedResource.value;
   }
+
 
   Future<void> onRefresh() async {
     paginationController.refresh(filter: '', search: '');
   }
 
-  void updateUser() async {
-    Map<String, dynamic> data = {"name": fullNameController.text, "email": emailController.text};
-    await callDataService(repository.updateUser(repository.currentUserId, data), onSuccess: (v) {
-      AppToasts.defaultBanner(msg: "Update Successfully");
-    });
-  }
-
-  void onApplyFilter() async {
-    Get.back();
-    await onRefresh();
-  }
 }

@@ -1,20 +1,22 @@
 import 'package:bs_assignment/core/theme/colors.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:readmore/readmore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WidgetReadMoreText extends StatelessWidget {
-  const WidgetReadMoreText(
-      {Key? key,
-      required this.text,
-      this.trimLines = 1,
-      this.preDataTextStyle,
-      this.textStyle,
-      this.moreStyle,
-      this.lessStyle,
-      this.clickableTextColor,
-      this.trimCollapsedText = 'More',
-      this.trimExpandedText = ' Less'})
-      : super(key: key);
+  const WidgetReadMoreText({
+    Key? key,
+    required this.text,
+    this.trimLines = 1,
+    this.preDataTextStyle,
+    this.textStyle,
+    this.moreStyle,
+    this.lessStyle,
+    this.clickableTextColor,
+    this.trimCollapsedText = 'More',
+    this.trimExpandedText = ' Less',
+  }) : super(key: key);
 
   final String text;
   final int trimLines;
@@ -40,6 +42,21 @@ class WidgetReadMoreText extends StatelessWidget {
       trimCollapsedText: trimCollapsedText,
       trimExpandedText: trimExpandedText,
       textAlign: TextAlign.justify,
+      annotations: [
+        Annotation(
+          regExp: RegExp(r'https?://[^\s]+'),
+          spanBuilder: ({required String text, TextStyle? textStyle}) => TextSpan(
+            text: text,
+            style: textStyle?.copyWith(color: Colors.blue, decoration: TextDecoration.underline),
+            recognizer: TapGestureRecognizer()..onTap = () async {
+              final url = text;
+              if (await canLaunch(url)) {
+                await launch(url);
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
 }

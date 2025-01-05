@@ -1,9 +1,12 @@
 import 'package:bs_assignment/core/theme/colors.dart';
 import 'package:bs_assignment/core/theme/text.dart';
+import 'package:bs_assignment/core/uttils/icons.dart';
 import 'package:bs_assignment/core/values/values.dart';
 import 'package:bs_assignment/core/widget/global/button/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../../generated/assets.dart';
 
 AppBar baseAppBar({
   String title = '',
@@ -22,10 +25,12 @@ AppBar baseAppBar({
   Widget? defaultActionButtonIcon,
   VoidCallback? onPressedDefaultActionButton,
   VoidCallback? onPressedLeading,
+  double? toolbarHeight
 }) {
   return AppBar(
     title: titleWidget ?? AppText.headline5(title, color: titleColor ?? AppColor.whiteFFFFFF),
     titleSpacing: 0,
+    toolbarHeight: toolbarHeight??60.0,
     elevation: 0.0,
     leading: leadingArrow
         ? TextPrimaryButton(
@@ -42,7 +47,7 @@ AppBar baseAppBar({
           )
         : hideLeading
             ? Container()
-            : leading,
+            : leading??const Icon(Icons.menu),
     centerTitle: modalView ? (titleCenter ? titleCenter : !modalView) : titleCenter,
     backgroundColor: modalView ? AppColor.whiteFFFFFF : backgroundColor,
     titleTextStyle: modalView

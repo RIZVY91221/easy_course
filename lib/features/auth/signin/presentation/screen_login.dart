@@ -13,6 +13,9 @@ import 'package:bs_assignment/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
 class LoginScreen extends BaseView<LoginController> {
   LoginScreen({super.key});
 
@@ -23,136 +26,160 @@ class LoginScreen extends BaseView<LoginController> {
 
   @override
   Color pageBackgroundColor() {
-    return AppColor.scaffoldColor;
+    return AppColor.primaryOne4B9EFF;
   }
 
   @override
-  Widget body(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppPadding.p30),
-      physics: const ClampingScrollPhysics(),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          /// Headlines
-          Image.asset(
-            Assets.iconsDokanLogo,
-            width: Get.width / 2,
-          ),
-
-          AppGap.vertical10,
-
-          /// Subtitle
-          subTitle(),
-
-          /// Error text message
-          Obx(() => Padding(
-                padding: const EdgeInsets.only(
-                  top: AppPadding.p10,
-                  left: AppPadding.p20,
-                  right: AppPadding.p20,
-                ),
-                child: Text(
-                  controller.errorMsg.value,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: controller.errorMessageColor ?? AppColor.errorFE6C44),
-                  textAlign: TextAlign.center,
-                ),
-              )),
-
-          AppGap.vertical40,
-
-          /// Email text
-          Obx(
-            () => BaseTextInput(
-              hintText: AppString.email,
-              elevation: 5,
-              keyboardType: TextInputType.emailAddress,
-              onChanged: (String? val) => controller.inputTextTypingMonitor(),
-              onFocusChange: (val) => controller.inputTextTypingMonitor(),
-              error: controller.isEmailInvalid.value,
-              controller: controller.emailTextEditingController,
-            ),
-          ),
-
-          AppGap.vertical15,
-
-          /// Password text
-          Obx(
-            () => BaseTextInput(
-              hintText: AppString.password,
-              elevation: 5,
-              keyboardType: TextInputType.visiblePassword,
-              onChanged: (String? val) => controller.inputTextTypingMonitor(),
-              onFocusChange: (val) => controller.inputTextTypingMonitor(),
-              error: controller.isEmailInvalid.value,
-              controller: controller.passwordTextEditingController,
-              obscureText: true,
-            ),
-          ),
-          AppGap.vertical10,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              TextPrimaryButton(
-                text: AppString.forgotPassword,
-                onPressed: () {},
-              )
-            ],
-          ),
-          AppGap.vertical20,
-
-          /// Login button
-          Obx(
-            () => DefaultPrimaryButton(
-              onPressed: () async => await controller.login(),
-              disable: controller.isButtonDisabled.value,
-              buttonRound: ButtonRound.halfRounded,
-              child: Text(AppString.login, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColor.whiteFFFFFF)),
-            ),
-          ),
-          AppGap.vertical20,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [customLoginButton(Assets.iconsFacebook), customLoginButton(Assets.iconsGoogleIcon)],
-          ),
-
-          AppGap.vertical30,
-          Center(
-            child: GestureDetector(onTap: () => Get.toNamed(AppRoutes.SIGNUP_SCREEN), child: AppText.headline6("Create New Account")),
-          )
-        ],
-      ),
-    );
+  Color statusBarColor() {
+    return AppColor.primaryOne4B9EFF;
   }
 
-  Widget subTitle() => Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppPadding.p20,
-        ),
-        child: Text(
-          AppString.subTitle,
-          style: Theme.of(Get.context!).textTheme.bodyMedium?.copyWith(color: AppColor.dark202125, fontWeight: FontWeight.w500),
-          textAlign: TextAlign.center,
-        ),
-      );
 
-  Widget customLoginButton(String svg, {VoidCallback? onPress}) => GestureDetector(
-        onTap: onPress,
-        child: Card(
-          color: AppColor.whiteFFFFFF,
-          elevation: 2,
-          child: Container(
-            height: 56,
-            width: 56,
-            //margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-            decoration: BoxDecoration(
-              color: AppColor.whiteFFFFFF,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(
-              child: appSVG(svg),
-            ),
+  @override
+  Widget body(BuildContext context) {
+    return Stack(
+      children: [
+
+        /// Content
+        SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              AppGap.vertical(MediaQuery.of(context).size.height / 8),
+
+              /// Logo
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: appSVG(
+                  Assets.svgHomeIcon,
+                  size: 200,
+                  width: Get.width / 2,
+                ),
+              ),
+
+              AppGap.vertical(MediaQuery.of(context).size.height / 10),
+
+              /// Bottom Container (Sign-In Form)
+              Container(
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height * 0.65,
+                decoration: BoxDecoration(
+                  color: AppColor.primaryTwo10CCE4,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40),
+                  ),
+                ),
+                child: Card(
+                  color: AppColor.primaryTwo10CCE4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  elevation: 40,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppGap.vertical20,
+                        Center(
+                          child: AppText.headline3(
+                            "Sign In",
+                            color: AppColor.whiteFFFFFF,
+                          ),
+                        ),
+                        AppGap.vertical20,
+
+                        /// Email Input Field
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 5),
+                          child: AppText.bodyVerySmall(
+                            "Email",
+                            color: AppColor.secondaryToneFiveE4F7F6,
+                          ),
+                        ),
+                        Obx(
+                              () => BaseTextInput(
+                            hintText: AppString.email,
+                            elevation: 5,
+                            keyboardType: TextInputType.emailAddress,
+                            onChanged: (String? val) =>
+                                controller.inputTextTypingMonitor(),
+                            onFocusChange: (val) =>
+                                controller.inputTextTypingMonitor(),
+                            error: controller.isEmailInvalid.value,
+                            controller: controller.emailTextEditingController,
+                          ),
+                        ),
+                        AppGap.vertical10,
+
+                        /// Password Input Field
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0, vertical: 5),
+                          child: AppText.bodyVerySmall(
+                            "Password",
+                            color: AppColor.secondaryToneFiveE4F7F6,
+                          ),
+                        ),
+                        Obx(
+                              () => BaseTextInput(
+                            hintText: AppString.password,
+                            elevation: 5,
+                            keyboardType: TextInputType.visiblePassword,
+                            onChanged: (String? val) =>
+                                controller.inputTextTypingMonitor(),
+                            onFocusChange: (val) =>
+                                controller.inputTextTypingMonitor(),
+                            error: controller.isEmailInvalid.value,
+                            controller: controller.passwordTextEditingController,
+                            obscureText: true,
+                          ),
+                        ),
+                        AppGap.vertical10,
+
+                        /// Forgot Password Button
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextPrimaryButton(
+                              text: AppString.forgotPassword,
+                              onPressed: () {},
+                            ),
+                          ],
+                        ),
+                        AppGap.vertical20,
+
+                        /// Login Button
+                        Obx(
+                              () => DefaultPrimaryButton(
+                            onPressed: () async => await controller.login(),
+                            disable: controller.isButtonDisabled.value,
+                            buttonRound: ButtonRound.halfRounded,
+                            backgroundColor: AppColor.loginButtonColor,
+                            child: Text(
+                              AppString.login,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(color: AppColor.dark202125),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      );
+      ],
+    );
+  }
 }
+

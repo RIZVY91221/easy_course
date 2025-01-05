@@ -1,9 +1,12 @@
 import 'package:bs_assignment/core/theme/colors.dart';
+import 'package:bs_assignment/core/theme/text.dart';
+import 'package:bs_assignment/core/uttils/icons.dart';
 import 'package:flutter/material.dart';
 
 class FABBottomAppBarItem {
-  FABBottomAppBarItem({required this.iconData, this.text});
-  IconData iconData;
+  FABBottomAppBarItem({ this.iconData,this.svgIcon, this.text});
+  IconData? iconData;
+  String? svgIcon;
   String? text;
 }
 
@@ -112,11 +115,11 @@ class FABBottomAppBarState extends State<FABBottomAppBar> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Icon(item.iconData, color: color, size: widget.iconSize),
+                item.svgIcon==null?Icon(item.iconData, color: color, size: widget.iconSize):appSVG(item.svgIcon,size: widget.iconSize,color: color),
                 item.text != null
-                    ? Text(
+                    ? AppText.bodyExtraSmall(
                         item.text ?? '',
-                        style: TextStyle(color: color),
+                        color: color
                       )
                     : const SizedBox.shrink()
               ],
